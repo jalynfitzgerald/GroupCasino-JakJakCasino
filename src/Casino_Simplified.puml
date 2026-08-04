@@ -1,0 +1,344 @@
+@startuml
+title Casino Simulation - Simplified UML Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+' =========================
+' CORE SYSTEM
+' =========================
+
+class Casino {
+  - scanner: Scanner
+  - games: List<GameInterface>
+  - customers: Map<UUID, CasinoCustomer>
+  - accountManager: CasinoAccountManager
+
+  + start(): void
+  + registerCustomer(name: String): CasinoCustomer
+  + selectGame(choice: int): GameInterface
+  + runGame(game: GameInterface, customer: CasinoCustomer): GameResult
+}
+
+interface GameInterface {
+  + getName(): String
+  + createPlayers(customer: CasinoCustomer): List<PlayerInterface>
+  + run(players: List<PlayerInterface>, customer: CasinoCustomer): GameResult
+}
+
+interface PlayerInterface {
+  + getDisplayName(): String
+  + getCustomer(): CasinoCustomer
+  + getAccount(): CasinoAccount
+}
+
+class CasinoAccountManager {
+  - accounts: Map<UUID, CasinoAccount>
+
+  + createAccount(ownerName: String): CasinoAccount
+  + getAccount(accountId: UUID): CasinoAccount
+}
+
+class CasinoCustomer {
+  - id: UUID
+  - name: String
+  - account: CasinoAccount
+}
+
+class CasinoAccount {
+  - balance: BigDecimal
+
+  + deposit(amount: BigDecimal): void
+  + withdraw(amount: BigDecimal): boolean
+  + getBalance(): BigDecimal
+}
+
+class GameResult {
+  - success: boolean
+  - message: String
+  - amountWon: BigDecimal
+}
+
+abstract class Bet {
+  - amount: BigDecimal
+}
+
+Casino "1" *-- "1..*" GameInterface : owns
+Casino "1" o-- "1" CasinoAccountManager : uses
+Casino "1" o-- "0..*" CasinoCustomer : manages
+CasinoAccountManager ..> CasinoAccount : creates
+CasinoCustomer "1" *-- "1" CasinoAccount : owns
+
+note right of CasinoCustomer
+Persists for the full casino session.
+end note
+
+note bottom of PlayerInterface
+Game-specific player objects are temporary
+and reference the persistent customer/account.
+end note
+
+' =========================
+' CRAPS
+' =========================
+
+package "Craps" {
+  class CrapsGame
+  class CrapsPlayer {
+    - customer: CasinoCustomer
+    - activeBets: List<CrapsBet>
+  }
+  class CrapsTable {
+    - point: Integer
+  }
+  class Die {
+    - sides: int = 6
+    + roll(): int
+  }
+  class CrapsBet {
+    - type: CrapsBetType
+  }
+
+  enum CrapsBetType {
+    PASS_LINE
+    DONT_PASS
+    COME
+    DONT_COME
+    PASS_ODDS
+    DONT_PASS_ODDS
+    PLACE_4
+    PLACE_5
+    PLACE_6
+    PLACE_8
+    PLACE_9
+    PLACE_10
+    BUY_4
+    BUY_5
+    BUY_6
+    BUY_8
+    BUY_9
+    BUY_10
+    LAY_4
+    LAY_5
+    LAY_6
+    LAY_8
+    LAY_9
+    LAY_10
+    FIELD
+    BIG_6
+    BIG_8
+    ANY_7
+    ANY_CRAPS
+    CRAPS_2
+    CRAPS_3
+    YO_11
+    CRAPS_12
+    HARD_4
+    HARD_6
+    HARD_8
+    HARD_10
+    HORN
+  }
+
+  CrapsGame ..|> GameInterface
+  CrapsPlayer ..|> PlayerInterface
+  CrapsBet --|> Bet
+
+  CrapsGame "1" *-- "1" CrapsPlayer : creates
+  CrapsGame "1" *-- "1" CrapsTable
+  CrapsGame "1" *-- "2" Die
+  CrapsPlayer "1" *-- "0..*" CrapsBet
+  CrapsBet --> CrapsBetType
+}
+
+' =========================
+' BLACKJACK
+' =========================
+
+package "Blackjack" {
+  class BlackjackGame
+  class BlackjackPlayer {
+    - customer: CasinoCustomer
+    - hands: List<Hand>
+  }
+  class DealerPlayer {
+    - hand: Hand
+  }
+  class Shoe {
+    - numberOfDecks: int
+    + shuffle(): void
+    + dealCard(): Card
+  }
+  class Deck
+  class Card {
+    - suit: Suit
+    - rank: Rank
+  }
+  class Hand {
+    - cards: List<Card>
+  }
+  class BlackjackBet
+
+  enum Suit {
+    CLUBS
+    DIAMONDS
+    HEARTS
+    SPADES
+  }
+
+  enum Rank {
+    TWO
+    THREE
+    FOUR
+    FIVE
+    SIX
+    SEVEN
+    EIGHT
+    NINE
+    TEN
+    JACK
+    QUEEN
+    KING
+    ACE
+  }
+
+  BlackjackGame ..|> GameInterface
+  BlackjackPlayer ..|> PlayerInterface
+  DealerPlayer ..|> PlayerInterface
+  BlackjackBet --|> Bet
+
+  BlackjackGame "1" *-- "1" BlackjackPlayer : creates
+  BlackjackGame "1" *-- "1" DealerPlayer : creates
+  BlackjackGame "1" *-- "1" Shoe
+  Shoe "1" *-- "1..8" Deck
+  Deck "1" *-- "52" Card
+  BlackjackPlayer "1" *-- "1..*" Hand
+  DealerPlayer "1" *-- "1" Hand
+  Hand "1" o-- "0..*" Card
+  Hand "1" *-- "1" BlackjackBet
+  Card --> Suit
+  Card --> Rank
+}
+
+' =========================
+' SLOTS
+' =========================
+
+package "Slots" {
+  class SlotsGame
+  class SlotsPlayer {
+    - customer: CasinoCustomer
+    - currentBet: SlotsBet
+  }
+  class SlotMachine
+  class Reel
+  class SlotsBet
+
+  SlotsGame ..|> GameInterface
+  SlotsPlayer ..|> PlayerInterface
+  SlotsBet --|> Bet
+
+  SlotsGame "1" *-- "1" SlotsPlayer : creates
+  SlotsGame "1" *-- "1" SlotMachine
+  SlotMachine "1" *-- "3..5" Reel
+  SlotsPlayer "1" *-- "1" SlotsBet
+}
+
+' =========================
+' ROULETTE
+' =========================
+
+package "Roulette" {
+  class RouletteGame
+  class RoulettePlayer {
+    - customer: CasinoCustomer
+    - currentBet: RouletteBet
+  }
+  class RouletteWheel
+  class Pocket
+  class RouletteBet
+
+  RouletteGame ..|> GameInterface
+  RoulettePlayer ..|> PlayerInterface
+  RouletteBet --|> Bet
+
+  RouletteGame "1" *-- "1" RoulettePlayer : creates
+  RouletteGame "1" *-- "1" RouletteWheel
+  RouletteWheel "1" *-- "37..38" Pocket
+  RoulettePlayer "1" *-- "1" RouletteBet
+}
+
+' =========================
+' HIGH-LOW
+' =========================
+
+package "High-Low" {
+  class HighLowGame
+  class HighLowPlayer {
+    - customer: CasinoCustomer
+  }
+  class NumberGenerator
+
+  HighLowGame ..|> GameInterface
+  HighLowPlayer ..|> PlayerInterface
+
+  HighLowGame "1" *-- "1" HighLowPlayer : creates
+  HighLowGame "1" *-- "1" NumberGenerator
+}
+
+' =========================
+' HORSE RACE
+' =========================
+
+package "Horse Race" {
+  class HorseRaceGame
+  class HorseRacePlayer {
+    - customer: CasinoCustomer
+    - currentBet: HorseRaceBet
+  }
+  class Race
+  class RaceHorse
+  class HorseRaceBet
+
+  HorseRaceGame ..|> GameInterface
+  HorseRacePlayer ..|> PlayerInterface
+  HorseRaceBet --|> Bet
+
+  HorseRaceGame "1" *-- "1" HorseRacePlayer : creates
+  HorseRaceGame "1" *-- "1" Race
+  Race "1" *-- "2..20" RaceHorse
+  HorseRacePlayer "1" *-- "1" HorseRaceBet
+}
+
+' =========================
+' SHARED REFERENCES
+' =========================
+
+CrapsPlayer --> CasinoCustomer
+BlackjackPlayer --> CasinoCustomer
+DealerPlayer --> CasinoCustomer
+SlotsPlayer --> CasinoCustomer
+RoulettePlayer --> CasinoCustomer
+HighLowPlayer --> CasinoCustomer
+HorseRacePlayer --> CasinoCustomer
+
+note bottom
+Persistent:
+- Casino
+- CasinoAccountManager
+- CasinoCustomer
+- CasinoAccount
+
+Temporary:
+- Game-specific players
+- Bets
+- Hands
+- Dice
+- Cards
+- Wheels
+- Shoe
+end note
+
+@enduml
