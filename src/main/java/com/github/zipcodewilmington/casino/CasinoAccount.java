@@ -10,31 +10,33 @@ import java.util.UUID;
  */
 public class CasinoAccount {
     private final BankAccount bankAccount;
-
-    public CasinoAccount() {
-        this(null);
-    }
-
-    public CasinoAccount(BankAccount bankAccount) {
-        this.bankAccount = bankAccount;
-    }
-
-    public BankAccount getBankAccount() {
-        return bankAccount;
     private final String accountName;
     private final String accountPassword;
     private final String accountReference;
     private BigDecimal balance;
 
     public CasinoAccount() {
-        this("", "");
+        this("", "", null);
+    }
+
+    public CasinoAccount(BankAccount bankAccount) {
+        this("", "", bankAccount);
     }
 
     public CasinoAccount(String accountName, String accountPassword) {
+        this(accountName, accountPassword, null);
+    }
+
+    private CasinoAccount(String accountName, String accountPassword, BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
         this.accountName = accountName;
         this.accountPassword = accountPassword;
         this.accountReference = UUID.randomUUID().toString();
         this.balance = BigDecimal.ZERO;
+    }
+
+    public BankAccount getBankAccount() {
+        return bankAccount;
     }
 
     public String getAccountName() {
