@@ -3,6 +3,7 @@ package com.github.zipcodewilmington.casino;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CasinoAccountTest {
@@ -19,5 +20,6 @@ public class CasinoAccountTest {
         CasinoAccount casinoAccount = new CasinoAccount(bankAccount);
 
         assertNotNull(casinoAccount.getBankAccount());
+        assertSame(bankAccount, casinoAccount.getBankAccount());
     }
 }
