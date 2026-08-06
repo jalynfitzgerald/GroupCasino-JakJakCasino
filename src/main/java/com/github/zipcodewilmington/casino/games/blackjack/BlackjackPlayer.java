@@ -7,12 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlackjackPlayer implements PlayerInterface {
+    private final String playerName;
     private final CasinoAccount account;
     private final List<Card> hand;
 
     public BlackjackPlayer(CasinoAccount account) {
+        this("Blackjack Player", account);
+    }
+
+    public BlackjackPlayer(String playerName, CasinoAccount account) {
+        this.playerName = playerName;
         this.account = account;
         this.hand = new ArrayList<>();
+    }
+
+    public String getPlayerName() {
+        return playerName;
     }
 
     @Override
