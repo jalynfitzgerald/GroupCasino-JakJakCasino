@@ -92,8 +92,7 @@ public class RouletteGame implements GameInterface {
                     payout = player.getBetAmount() * 2;
                 }
 
-                player.getCasinoAccount()
-                        .deposit(BigDecimal.valueOf(payout));
+                player.getCasinoAccount().deposit(payout);
 
                 console.println("-------------------------");
                 console.println("Winner!");

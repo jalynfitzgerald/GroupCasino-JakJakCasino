@@ -1,7 +1,5 @@
 package com.github.zipcodewilmington.casino.games.roulette;
 
-import java.math.BigDecimal;
-
 import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.PlayerInterface;
 
@@ -23,8 +21,7 @@ public class RoulettePlayer implements PlayerInterface {
                             int selectedNumber,
                             int betAmount) {
 
-        if (account.withdraw(BigDecimal.valueOf(betAmount))) {
-
+        if (account.withdraw(betAmount)) {
             this.betType = betType;
             this.selectedNumber = selectedNumber;
             this.betAmount = betAmount;
@@ -56,4 +53,4 @@ public class RoulettePlayer implements PlayerInterface {
     public RouletteBetType getBetType() {
         return betType;
     }
-}
+}11
