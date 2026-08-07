@@ -1,5 +1,6 @@
 package com.github.zipcodewilmington.casino.games.blackjack;
 
+import com.github.zipcodewilmington.casino.cards.Card;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
