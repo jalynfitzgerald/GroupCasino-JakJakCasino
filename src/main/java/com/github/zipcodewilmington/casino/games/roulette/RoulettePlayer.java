@@ -11,6 +11,7 @@ public class RoulettePlayer implements PlayerInterface {
     private RouletteBetType betType;
     private int selectedNumber;
     private int betAmount;
+    private RouletteBetType betType;
 
     public RoulettePlayer(String playerName, CasinoAccount account) {
         this.playerName = playerName;

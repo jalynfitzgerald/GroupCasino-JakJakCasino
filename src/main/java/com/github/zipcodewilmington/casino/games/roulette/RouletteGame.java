@@ -6,15 +6,19 @@ import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
+import com.github.zipcodewilmington.utils.AnsiColor;
+import com.github.zipcodewilmington.utils.IOConsole;
 
 public class RouletteGame implements GameInterface {
 
     private RouletteWheel wheel;
     private List<PlayerInterface> players;
+    private IOConsole console;
 
     public RouletteGame() {
         this.wheel = new RouletteWheel();
         this.players = new ArrayList<>();
+        this.console = new IOConsole(AnsiColor.GREEN);
     }
 
     @Override
@@ -114,7 +118,8 @@ public class RouletteGame implements GameInterface {
 
                 System.out.println("Winner!");
 
-            } else {
+                player.getCasinoAccount()
+                        .deposit(BigDecimal.valueOf(payout));
 
                 System.out.println("You Lost!");
             }
