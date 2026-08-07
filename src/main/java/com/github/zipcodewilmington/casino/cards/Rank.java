@@ -1,4 +1,4 @@
-package com.github.zipcodewilmington.casino.games.blackjack;
+package com.github.zipcodewilmington.casino.cards;
 
 public enum Rank {
     TWO(2),
