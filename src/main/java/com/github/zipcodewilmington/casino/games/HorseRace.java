@@ -1,26 +1,27 @@
 package com.github.zipcodewilmington.casino.games.horserace;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
-import com.github.zipcodewilmington.casino.GameInterface;
-import com.github.zipcodewilmington.casino.PlayerInterface;
+public class HorseRace {
+    private String name;
+    private int position;
 
-public class HorseRace implements GameInterface {
-    private final List<PlayerInterface> players = new ArrayList<>();
+    public HorseRace(String name) {
+        this.name= name;
+        this.position = 0;
+    }
+    
 
-    @Override
-    public void add(PlayerInterface player) {
-        players.add(player);
+    public void move () {
+        Random random = new Random();
+        position += random.nextInt(5) + 1;
     }
 
-    @Override
-    public void remove(PlayerInterface player) {
-        players.remove(player);
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public void run() {
-        
+    public int getPosition() {
+        return position;
     }
 }
