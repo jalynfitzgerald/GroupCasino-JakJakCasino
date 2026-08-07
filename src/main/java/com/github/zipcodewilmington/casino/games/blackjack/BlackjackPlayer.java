@@ -1,12 +1,12 @@
 package com.github.zipcodewilmington.casino.games.blackjack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.PlayerInterface;
 import com.github.zipcodewilmington.casino.cards.Card;
 import com.github.zipcodewilmington.casino.cards.Rank;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlackjackPlayer implements PlayerInterface {
     private final String playerName;
@@ -27,8 +27,7 @@ public class BlackjackPlayer implements PlayerInterface {
         return playerName;
     }
 
-    @Override
-    public CasinoAccount getArcadeAccount() {
+    public CasinoAccount getCasinoAccount() {
         return account;
     }
 
