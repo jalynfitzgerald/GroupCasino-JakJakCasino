@@ -42,3 +42,4 @@ public class CasinoAccount {
         return this.password.equals(password);
     }
 }
+
