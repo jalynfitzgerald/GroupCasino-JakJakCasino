@@ -11,11 +11,9 @@ import java.util.Map;
 public class CasinoAccountManager {
     private final Map<String, CasinoAccount> accountByName = new HashMap<>();
 
-    /**
-     * @param accountName     name of account to be returned
-     * @param accountPassword password of account to be returned
-     * @return `ArcadeAccount` with specified `accountName` and `accountPassword`
-     */
+
+    private final Map<String, CasinoAccount> accounts = new HashMap<>();
+
     public CasinoAccount getAccount(String accountName, String accountPassword) {
         CasinoAccount account = accountByName.get(accountName);
         if (account == null) {
@@ -25,15 +23,21 @@ public class CasinoAccountManager {
             return null;
         }
         return account;
+public class CasinoAccountManager {
+
+    private final Map<String, CasinoAccount> accounts = new HashMap<>();
+
+    public CasinoAccount getAccount(String accountName, String accountPassword) {
+
+        CasinoAccount account = accounts.get(accountName);
+
+        if (account != null && account.checkPassword(accountPassword)) {
+            return account;
+        }
+
+        return null;
     }
 
-    /**
-     * logs & creates a new `ArcadeAccount`
-     *
-     * @param accountName     name of account to be created
-     * @param accountPassword password of account to be created
-     * @return new instance of `ArcadeAccount` with specified `accountName` and `accountPassword`
-     */
     public CasinoAccount createAccount(String accountName, String accountPassword) {
         return new CasinoAccount(accountName, accountPassword);
     }
@@ -48,5 +52,22 @@ public class CasinoAccountManager {
             throw new IllegalArgumentException("Cannot register a null account");
         }
         accountByName.put(casinoAccount.getAccountName(), casinoAccount);
+
+        if (accounts.containsKey(accountName)) {
+            return null;
+        }
+
+        CasinoAccount account =
+                new CasinoAccount(accountName, accountPassword);
+
+        registerAccount(accountName, account);
+
+        return account;
+    }
+
+    public void registerAccount(String accountName,
+                                CasinoAccount casinoAccount) {
+
+        accounts.put(accountName, casinoAccount);
     }
 }
