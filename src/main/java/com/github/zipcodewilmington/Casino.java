@@ -10,6 +10,8 @@ import com.github.zipcodewilmington.casino.games.blackjack.BlackjackGame;
 import com.github.zipcodewilmington.casino.games.blackjack.BlackjackPlayer;
 import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessGame;
 import com.github.zipcodewilmington.casino.games.numberguess.NumberGuessPlayer;
+import com.github.zipcodewilmington.casino.games.roulette.RouletteGame;
+import com.github.zipcodewilmington.casino.games.roulette.RoulettePlayer;
 import com.github.zipcodewilmington.casino.games.slots.SlotsGame;
 import com.github.zipcodewilmington.casino.games.slots.SlotsPlayer;
 import com.github.zipcodewilmington.utils.AnsiColor;
@@ -26,34 +28,89 @@ public class Casino implements Runnable {
         CasinoAccountManager casinoAccountManager = new CasinoAccountManager();
 
         do {
-            arcadeDashBoardInput = getArcadeDashboardInput();
-            if ("select-game".equals(arcadeDashBoardInput)) {
-                String accountName = console.getStringInput("Enter your account name:");
-                String accountPassword = console.getStringInput("Enter your account password:");
-                CasinoAccount casinoAccount = casinoAccountManager.getAccount(accountName, accountPassword);
-                boolean isValidLogin = casinoAccount != null;
-                if (isValidLogin) {
-                    String gameSelectionInput = getGameSelectionInput().toUpperCase();
-                    if (gameSelectionInput.equals("SLOTS")) {
-                        play(new SlotsGame(), new SlotsPlayer(accountName, casinoAccount));
-                    } else if (gameSelectionInput.equals("NUMBERGUESS")) {
-                        play(new NumberGuessGame(), new NumberGuessPlayer(accountName, casinoAccount));
-                    } else {
-                        // TODO - implement better exception handling
-                        String errorMessage = "[ %s ] is an invalid game selection";
-                        throw new RuntimeException(String.format(errorMessage, gameSelectionInput));
+
+            casinoDashboardInput = getCasinoDashboardInput();
+
+            switch (casinoDashboardInput) {
+
+                case "1":
+
+                    console.println("=== Create Account ===");
+
+                    String accountName = console.getStringInput("Enter Account Name:");
+                    String accountPassword = console.getStringInput("Enter Password:");
+
+                    CasinoAccount newAccount =
+                            casinoAccountManager.createAccount(accountName, accountPassword);
+
+                    casinoAccountManager.registerAccount(newAccount);
+
+                    console.println("Account Created Successfully!");
+
+                    break;
+
+                case "2":
+
+                    accountName = console.getStringInput("Enter Account Name:");
+                    accountPassword = console.getStringInput("Enter Password:");
+
+                    CasinoAccount casinoAccount =
+                            casinoAccountManager.getAccount(accountName, accountPassword);
+
+                    if (casinoAccount == null) {
+                        console.println("Invalid Login!");
+                        break;
                     }
-                } else {
-                    // TODO - implement better exception handling
-                    String errorMessage = "No account found with name of [ %s ] and password of [ %s ]";
-                    throw new RuntimeException(String.format(errorMessage, accountName, accountPassword));
-                }
-            } else if ("create-account".equals(arcadeDashBoardInput)) {
-                console.println("Welcome to the account-creation screen.");
-                String accountName = console.getStringInput("Enter your account name:");
-                String accountPassword = console.getStringInput("Enter your account password:");
-                CasinoAccount newAccount = casinoAccountManager.createAccount(accountName, accountPassword);
-                casinoAccountManager.registerAccount(newAccount);
+
+                    String gameChoice = getGameSelectionInput();
+
+                    switch (gameChoice) {
+
+                        case "1":
+                           play(new RouletteGame(),
+                                    new RoulettePlayer(accountName, casinoAccount));
+                            break;
+
+                        case "2":
+                            console.println("Slots Coming Soon...");
+                            break;
+
+                        case "3":
+                            play(new BlackjackGame(),
+                                    new BlackjackPlayer(accountName, casinoAccount));
+                            break;
+
+                        case "4":
+                            console.println("Craps Coming Soon...");
+                            break;
+
+                        case "5":
+                            play(new NumberGuessGame(),
+                                    new NumberGuessPlayer(accountName, casinoAccount));
+                            break;
+
+                        case "6":
+                            console.println("Horse Race Coming Soon...");
+                            break;
+
+                        case "7":
+                            console.println("Returning to Main Menu...");
+                            break;
+
+                        default:
+                            console.println("Invalid Game Selection.");
+                    }
+
+                    break;
+
+                case "3":
+
+                    console.println("Thank you for visiting JakJak Casino!");
+                    break;
+
+                default:
+
+                    console.println("Invalid Menu Choice.");
             }
 
         } while (!casinoDashboardInput.equals("3"));
