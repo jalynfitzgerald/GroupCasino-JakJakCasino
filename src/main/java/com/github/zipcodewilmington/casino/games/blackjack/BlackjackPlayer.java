@@ -2,6 +2,8 @@ package com.github.zipcodewilmington.casino.games.blackjack;
 
 import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.PlayerInterface;
+import com.github.zipcodewilmington.casino.cards.Card;
+import com.github.zipcodewilmington.casino.cards.Rank;
 
 import java.util.ArrayList;
 import java.util.List;
