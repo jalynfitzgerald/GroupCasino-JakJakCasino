@@ -10,27 +10,50 @@ public class RoulettePlayer implements PlayerInterface {
     private CasinoAccount account;
     private int selectedNumber;
     private int betAmount;
+    private RouletteBetType betType;
 
     public RoulettePlayer(CasinoAccount account) {
-    this.account = account;
-    this.selectedNumber = 0;
-    this.betAmount = 0;
-}
-public boolean placeBet(int selectedNumber, int betAmount) {
-    if (account.withdraw(BigDecimal.valueOf(betAmount))) {
-        this.selectedNumber = selectedNumber;
-        this.betAmount = betAmount;
-        return true;
+        this.account = account;
+        this.selectedNumber = 0;
+        this.betAmount = 0;
+        this.betType = RouletteBetType.NUMBER;
     }
-    return false;
-}
-@Override
-public CasinoAccount getArcadeAccount() {
-    return account;
-}
 
-@Override
-public Boolean play() {
-    return null;
-}
+    public boolean placeBet(RouletteBetType betType,
+                            int selectedNumber,
+                            int betAmount) {
+
+        if (account.withdraw(BigDecimal.valueOf(betAmount))) {
+
+            this.betType = betType;
+            this.selectedNumber = selectedNumber;
+            this.betAmount = betAmount;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public CasinoAccount getCasinoAccount() {
+        return account;
+    }
+
+    @Override
+    public <SomeReturnType> SomeReturnType play() {
+        return null;
+    }
+
+    public int getSelectedNumber() {
+        return selectedNumber;
+    }
+
+    public int getBetAmount() {
+        return betAmount;
+    }
+
+    public RouletteBetType getBetType() {
+        return betType;
+    }
 }
