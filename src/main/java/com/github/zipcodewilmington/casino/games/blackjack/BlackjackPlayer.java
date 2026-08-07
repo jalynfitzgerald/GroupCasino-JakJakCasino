@@ -47,6 +47,10 @@ public class BlackjackPlayer implements PlayerInterface {
         return new ArrayList<>(hand);
     }
 
+    public void clearHand() {
+        hand.clear();
+    }
+
     public int getHandValue() {
         int total = 0;
         int aces = 0;

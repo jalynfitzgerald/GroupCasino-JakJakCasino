@@ -49,6 +49,11 @@ public class BlackjackGame implements GameInterface {
     }
 
     public void dealInitialCards() {
+        for (BlackjackPlayer player : players) {
+            player.clearHand();
+        }
+        dealer.clearHand();
+
         for (int i = 0; i < 2; i++) {
             for (BlackjackPlayer player : players) {
                 player.addCard(shoe.deal());
