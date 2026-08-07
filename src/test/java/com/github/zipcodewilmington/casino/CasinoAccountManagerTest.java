@@ -44,5 +44,7 @@ public class CasinoAccountManagerTest {
         assertEquals("Lucky", numberGuessPlayer.getPlayerName());
         assertSame(account, slotsPlayer.getArcadeAccount());
         assertSame(account, numberGuessPlayer.getArcadeAccount());
+        assertSame(account, slotsPlayer.getAccount());
+        assertSame(account, numberGuessPlayer.getAccount());
     }
 }
