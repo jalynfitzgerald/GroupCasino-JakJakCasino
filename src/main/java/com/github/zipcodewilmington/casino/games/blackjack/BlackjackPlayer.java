@@ -9,9 +9,11 @@ import com.github.zipcodewilmington.casino.cards.Card;
 import com.github.zipcodewilmington.casino.cards.Rank;
 
 public class BlackjackPlayer implements PlayerInterface {
+
     private final String playerName;
     private final CasinoAccount account;
     private final List<Card> hand;
+    private int betAmount;
 
     public BlackjackPlayer(CasinoAccount account) {
         this("Blackjack Player", account);
@@ -21,6 +23,7 @@ public class BlackjackPlayer implements PlayerInterface {
         this.playerName = playerName;
         this.account = account;
         this.hand = new ArrayList<>();
+        this.betAmount = 0;
     }
 
     public String getPlayerName() {
@@ -29,6 +32,16 @@ public class BlackjackPlayer implements PlayerInterface {
 
     public CasinoAccount getCasinoAccount() {
         return account;
+    }
+
+    public boolean placeBet(int amount) {
+
+        if (account.withdraw(amount)) {
+            betAmount = amount;
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -48,6 +61,10 @@ public class BlackjackPlayer implements PlayerInterface {
 
     public void clearHand() {
         hand.clear();
+    }
+
+    public int getBetAmount() {
+        return betAmount;
     }
 
     public int getHandValue() {

@@ -7,11 +7,13 @@ import com.github.zipcodewilmington.casino.PlayerInterface;
  * Created by leon on 7/21/2020.
  */
 public class NumberGuessPlayer implements PlayerInterface {
+
     private final String playerName;
     private final CasinoAccount account;
 
     public NumberGuessPlayer() {
-        this("Number Guess Player", new CasinoAccount());
+        this("Number Guess Player",
+                new CasinoAccount("Number Guess Player", ""));
     }
 
     public NumberGuessPlayer(String playerName, CasinoAccount account) {
@@ -24,7 +26,7 @@ public class NumberGuessPlayer implements PlayerInterface {
     }
 
     @Override
-    public CasinoAccount getArcadeAccount() {
+    public CasinoAccount getCasinoAccount() {
         return account;
     }
 

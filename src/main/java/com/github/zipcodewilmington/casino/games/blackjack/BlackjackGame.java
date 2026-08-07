@@ -2,6 +2,7 @@ package com.github.zipcodewilmington.casino.games.blackjack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.CasinoAccount;
 import com.github.zipcodewilmington.casino.GameInterface;
@@ -15,13 +16,13 @@ public class BlackjackGame implements GameInterface {
     private final Shoe shoe;
 
     public BlackjackGame() {
-    this.players = new ArrayList<>();
-    this.shoe = new Shoe(6);
-    this.shoe.shuffle();
+        this.players = new ArrayList<>();
+        this.shoe = new Shoe(6);
+        this.shoe.shuffle();
 
-    CasinoAccount dealerAccount = new CasinoAccount(/* whatever your constructor requires */);
-    this.dealer = new BlackjackPlayer("Dealer", dealerAccount);
-}
+        CasinoAccount dealerAccount = new CasinoAccount("Dealer", "");
+        this.dealer = new BlackjackPlayer("Dealer", dealerAccount);
+    }
 
     @Override
     public void add(PlayerInterface player) {
@@ -63,7 +64,6 @@ public class BlackjackGame implements GameInterface {
     }
 
     public Card hit(BlackjackPlayer player) {
-
         Card card = dealFromShoe();
 
         if (card != null) {
@@ -78,14 +78,12 @@ public class BlackjackGame implements GameInterface {
     }
 
     public void playDealerTurn() {
-
         while (dealer.getHandValue() < 17) {
             hit(dealer);
         }
     }
 
     public String determineWinner(BlackjackPlayer player) {
-
         int playerValue = player.getHandValue();
         int dealerValue = dealer.getHandValue();
 
@@ -118,26 +116,79 @@ public class BlackjackGame implements GameInterface {
 
     @Override
     public void run() {
+        Scanner scanner = new Scanner(System.in);
 
+        for (BlackjackPlayer player : players) {
+
+            System.out.println(player.getPlayerName()
+                    + " Balance: $"
+                    + player.getCasinoAccount().getBalance());
+
+            System.out.print("Enter wager: ");
+
+            int wager = scanner.nextInt();
+
+            if (!player.placeBet(wager)) {
+                System.out.println("Insufficient funds.");
+                return;
+            }
+        }
         dealInitialCards();
 
         for (BlackjackPlayer player : players) {
 
-            if (!isBusted(player)) {
+            while (!isBusted(player)) {
+
+                System.out.println();
+                System.out.println(player.getPlayerName() + "'s hand: " + player.getHand());
+                System.out.println("Hand Value: " + player.getHandValue());
+
+                System.out.print("Hit or Stand? (h/s): ");
+                String choice = scanner.next().trim().toLowerCase();
+
+                if (choice.equals("h")) {
+
+                    Card card = hit(player);
+
+                    System.out.println("You drew: " + card);
+
+                } else {
+
+                    break;
+                }
+            }
+
+            if (isBusted(player)) {
+                System.out.println(player.getPlayerName() + " busted!");
+            } else {
                 playDealerTurn();
             }
 
             String winner = determineWinner(player);
 
+            if (winner.equals(player.getPlayerName())) {
+
+                player.getCasinoAccount()
+                        .deposit(player.getBetAmount() * 2);
+
+            } else if (winner.equals("Push")) {
+
+                player.getCasinoAccount()
+                        .deposit(player.getBetAmount());
+            }
+
             System.out.println(
                     player.getPlayerName()
-                            + ": "
-                            + player.getHandValue()
-                            + " | Dealer: "
-                            + dealer.getHandValue()
+                    + ": "
+                    + player.getHandValue()
+                    + " | Dealer: "
+                    + dealer.getHandValue()
             );
 
             System.out.println("Winner: " + winner);
+
+            System.out.println("Balance: $"
+                    + player.getCasinoAccount().getBalance());
         }
     }
 }
