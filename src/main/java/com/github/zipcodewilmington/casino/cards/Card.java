@@ -1,6 +1,7 @@
 package com.github.zipcodewilmington.casino.cards;
 
 public class Card {
+
     private final Suit suit;
     private final Rank rank;
 
@@ -19,5 +20,10 @@ public class Card {
 
     public int getValue() {
         return rank.getValue();
+    }
+
+    @Override
+    public String toString() {
+        return getRank() + " of " + getSuit();
     }
 }

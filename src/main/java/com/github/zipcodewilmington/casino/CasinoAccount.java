@@ -12,10 +12,6 @@ public class CasinoAccount {
         this.balance = 250;
     }
 
-    public CasinoAccount() {
-        //TODO Auto-generated constructor stub
-    }
-
     public void deposit(int amount) {
         if (amount > 0) {
             balance += amount;
@@ -42,4 +38,3 @@ public class CasinoAccount {
         return this.password.equals(password);
     }
 }
-

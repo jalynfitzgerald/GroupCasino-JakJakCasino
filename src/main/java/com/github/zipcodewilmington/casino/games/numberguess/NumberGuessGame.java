@@ -2,9 +2,8 @@ package com.github.zipcodewilmington.casino.games.numberguess;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.random;
-import java.util.scanner;
-
+import java.util.Random;
+import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
@@ -74,4 +73,4 @@ public class NumberGuessGame implements GameInterface {
             }
         }
 }
-
+}

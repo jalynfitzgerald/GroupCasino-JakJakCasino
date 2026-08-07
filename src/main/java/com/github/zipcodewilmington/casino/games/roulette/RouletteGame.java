@@ -1,8 +1,8 @@
 package com.github.zipcodewilmington.casino.games.roulette;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
@@ -34,82 +34,98 @@ public class RouletteGame implements GameInterface {
     @Override
     public void run() {
 
-        console.println("====== ROULETTE ======");
-        console.println("1. Bet on Number");
-        console.println("2. Bet on Red");
-        console.println("3. Bet on Black");
-
-        String choice = console.getStringInput("Choose your bet:");
-
-        int amount = Integer.parseInt(
-                console.getStringInput("Enter bet amount:")
-        );
-
-        int winningNumber = wheel.spin();
-        RouletteBetType winningColor = getWinningColor(winningNumber);
+        Scanner scanner = new Scanner(System.in);
 
         for (PlayerInterface playerInterface : players) {
 
             RoulettePlayer player = (RoulettePlayer) playerInterface;
 
-            if (choice.equals("1")) {
+            System.out.println("\nBalance: $"
+                    + player.getCasinoAccount().getBalance());
 
-                int number = Integer.parseInt(
-                        console.getStringInput("Choose a number (0-36):")
-                );
+            System.out.println("1. Bet on a number");
+            System.out.println("2. Bet on RED");
+            System.out.println("3. Bet on BLACK");
 
-                player.placeBet(RouletteBetType.NUMBER, number, amount);
+            System.out.print("Choose bet type: ");
+            int choice = scanner.nextInt();
 
-            } else if (choice.equals("2")) {
+            System.out.print("Enter wager amount: ");
+            int betAmount = scanner.nextInt();
 
-                player.placeBet(RouletteBetType.RED, 0, amount);
+            boolean betPlaced = false;
+
+            if (choice == 1) {
+
+                System.out.print("Choose a number 0-36: ");
+                int selectedNumber = scanner.nextInt();
+
+                betPlaced
+                        = player.placeNumberBet(selectedNumber, betAmount);
+
+            } else if (choice == 2) {
+
+                betPlaced
+                        = player.placeColorBet(
+                                RouletteBetType.RED,
+                                betAmount
+                        );
+
+            } else if (choice == 3) {
+
+                betPlaced
+                        = player.placeColorBet(
+                                RouletteBetType.BLACK,
+                                betAmount
+                        );
 
             } else {
 
-                player.placeBet(RouletteBetType.BLACK, 0, amount);
-
+                System.out.println("Invalid selection.");
+                return;
             }
+
+            if (!betPlaced) {
+                System.out.println("Unable to place bet.");
+                return;
+            }
+
+            int winningNumber = wheel.spin();
+
+            RouletteBetType winningColor
+                    = getWinningColor(winningNumber);
 
             boolean winner;
 
             if (player.getBetType() == RouletteBetType.NUMBER) {
 
-                winner = player.getSelectedNumber() == winningNumber;
+                winner
+                        = player.getSelectedNumber() == winningNumber;
 
             } else {
 
-                winner = player.getBetType() == winningColor;
-
+                winner
+                        = player.getBetType() == winningColor;
             }
+
+            System.out.println("\nWinning Number: " + winningNumber);
+            System.out.println("Winning Color: " + winningColor);
 
             if (winner) {
 
-                int payout;
+                player.getCasinoAccount()
+                        .deposit(player.getBetAmount() * 2);
 
-                if (player.getBetType() == RouletteBetType.NUMBER) {
-                    payout = player.getBetAmount() * 35;
-                } else {
-                    payout = player.getBetAmount() * 2;
-                }
+                System.out.println("Winner!");
 
                 player.getCasinoAccount()
                         .deposit(BigDecimal.valueOf(payout));
 
-                console.println("-------------------------");
-                console.println("Winner!");
-                console.println("Winning Number: " + winningNumber);
-                console.println("Winning Color: " + winningColor);
-                console.println("You won $" + payout);
-                console.println("-------------------------");
-
-            } else {
-
-                console.println("-------------------------");
-                console.println("You Lost!");
-                console.println("Winning Number: " + winningNumber);
-                console.println("Winning Color: " + winningColor);
-                console.println("-------------------------");
+                System.out.println("You Lost!");
             }
+
+            System.out.println("Balance: $"
+                    + player.getCasinoAccount().getBalance());
         }
     }
 
