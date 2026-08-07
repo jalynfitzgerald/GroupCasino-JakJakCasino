@@ -37,30 +37,141 @@ interface PlayerInterface {
 class CrapsGame {
     +rollDice()
     +isDoubles()
+    +resolveBet()
 }
 
 class SlotsGame {
-    +spinWheel()
-    +betIncrement()
+    +spin(player : SlotsPlayer) : SpinResult
+    +determinePayout(result : SpinResult, bet : int) : int
+}
+
+class SlotsPlayer {
+    -betAmount : int
+    +placeBet(amount : int) : boolean
+    +getBetAmount() : int
+}
+
+class SlotMachine {
+    +spinReels() : SpinResult
+}
+
+class SpinResult {
+    -symbols : List<String>
+    +isWinner() : boolean
 }
 
 class RouletteGame {
-    +spinWheel()
+    +spinWheel() : int
+    +determineWinner(player : RoulettePlayer, result : int) : boolean
+}
+
+class RoulettePlayer {
+    -selectedNumber : int
+    -betAmount : int
+    +placeBet(number : int, amount : double) : boolean
+    +getSelectedNumber() : int
+}
+
+class RouletteWheel {
+    +spin() : int
 }
 
 class HorseRaceGame {
-    +horseName : String
+    +runRace() : RaceHorse
+    +determineWinner(horses : List<RaceHorse>) : RaceHorse
+}
+
+class HorseRacePlayer {
+    -selectedHorse : RaceHorse
+    -betAmount : double
+    +placeBet(horse : RaceHorse, amount : double) : boolean
+    +getSelectedHorse() : RaceHorse
+}
+
+class RaceHorse {
+    -name : String
+    -position : int
+    +move() : int
+    +getPosition() : int
 }
 
 class NumberGuessGame {
-   -randomNumber : int
-}
-class BlackjackGame{
-    +hitStay()
-    +split()
-    +doubleDown()
+    -randomNumber : int
+    +generateNumber() : int
+    +checkGuess(guess : int) : GuessResult
 }
 
+class NumberGuessPlayer {
+    -guess : int
+    +makeGuess(number : int) : int
+}
+
+enum GuessResult {
+    TOO_HIGH
+    TOO_LOW
+    CORRECT
+}
+
+class CrapsPlayer {
+    +placeBet(type : CrapsBetType, amount : int) : CrapsBet
+    +getActiveBets() : List<CrapsBet>
+}
+
+class BlackjackGame {
+    +deal(player : BlackjackPlayer, dealer : DealerPlayer) : boolean
+    +hit(player : BlackjackPlayer) : Card
+    +stand(player : BlackjackPlayer) : boolean
+    +determineWinner(player : BlackjackPlayer, dealer : DealerPlayer) : String
+}
+
+class BlackjackPlayer {
+    -hand : Hand
+    +getHand() : Hand
+    +isBusted() : boolean
+}
+
+class DealerPlayer {
+    -hand : Hand
+    +getHand() : Hand
+    +shouldHit() : boolean
+}
+
+class Shoe {
+    +drawCard() : Card
+    +shuffle() : boolean
+}
+
+class Hand {
+    -cards : List<Card>
+    +addCard(card : Card) : boolean
+    +getValue() : int
+}
+
+class Card {
+    -rank : String
+    -suit : String
+    +getValue() : int
+}
+
+abstract class CrapsBet {
+    -amount : int
+    -active : boolean
+    +resolve(roll : DiceRoll) : BetResult
+    +isActive() : boolean
+}
+
+class PersistentBet {
+    +resolve(roll : DiceRoll) : BetResult
+}
+
+class OneRollBet {
+    +resolve(roll : DiceRoll) : BetResult
+}
+
+class HardWayBet {
+    -targetNumber : int
+    +resolve(roll : DiceRoll) : BetResult
+}
 
 Casino --> CasinoAccountManager
 Casino --> GameInterface : runs
@@ -82,13 +193,13 @@ PlayerInterface <|.. RoulettePlayer
 PlayerInterface <|.. HorseRacePlayer
 PlayerInterface <|.. NumberGuessPlayer
 
-SlotsGame *-- SlotsPlayer
 BlackjackGame *-- BlackjackPlayer
 BlackjackGame *-- DealerPlayer
 CrapsGame *-- CrapsPlayer
 RouletteGame *-- RoulettePlayer
 HorseRaceGame *-- HorseRacePlayer
 NumberGuessGame *-- NumberGuessPlayer
+NumberGuessGame --> GuessResult
 
 BlackjackGame *-- Shoe
 Shoe *-- Deck : x decks combined
@@ -101,10 +212,18 @@ CrapsGame *-- Die : 2 die
 
 RouletteGame *-- RouletteWheel
 
+SlotsGame *-- SlotsPlayer
 SlotsGame *-- SlotMachine
+SlotMachine --> SpinResult : creates
 
-HorseRaceGame *-- RaceHorse
+HorseRaceGame *-- HorseRacePlayer
+HorseRaceGame *-- "2..*" RaceHorse
 
+CrapsBet <|-- PersistentBet
+CrapsBet <|-- OneRollBet
+PersistentBet <|-- HardWayBet
+CrapsPlayer --> CrapsBet : places
+CrapsGame --> CrapsBet : resolves
 
 
 legend left
