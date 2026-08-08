@@ -2,6 +2,7 @@ package com.github.zipcodewilmington.casino.games.horserace;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.github.zipcodewilmington.casino.GameInterface;
 import com.github.zipcodewilmington.casino.PlayerInterface;
@@ -21,6 +22,8 @@ public class HorseRaceGame implements GameInterface {
 
     @Override
     public void run() {
+        Scanner scanner = new Scanner(System.in);
+
         HorseRace horse1 = new HorseRace("Virtual Matt");
         HorseRace horse2 = new HorseRace("Terrick");
         HorseRace horse3 = new HorseRace("Jaymoney");
@@ -77,7 +80,7 @@ public class HorseRaceGame implements GameInterface {
             return;                         
     }
 
-    System.out.println("You chose:" + selectedHorse.getName());
+    System.out.println("You chose: " + selectedHorse.getName());
 
      
         boolean raceOver = false;
@@ -103,7 +106,12 @@ public class HorseRaceGame implements GameInterface {
                 }
             }
         }
+
+        System.out.println("\nFinal Results:");
+
+for (HorseRace horse : horses) {
+    System.out.println(horse.getName() + " finished at position" + horse.getPosition());
+}
     }
 }
-
-}
+ 

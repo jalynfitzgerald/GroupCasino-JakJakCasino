@@ -1,15 +1,13 @@
 package com.github.zipcodewilmington.casino.games.horserace;
 
-import java.util.Scanner
-
 public class HorseRacePlayer {
     private HorseRace selectedHorse;
 
     public HorseRacePlayer(HorseRace selectHorse) {
-        this.selectedHorse;
+        this.selectedHorse = selectHorse;
     }
     
     public HorseRace getSelectedHorse() {
-        return selectHorse;
+        return selectedHorse;
     }
 }
